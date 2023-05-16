@@ -26,18 +26,30 @@ namespace DOMPDFModule\Mvc\Service;
 use Dompdf\Dompdf;
 use DOMPDFModule\View\Renderer\PdfRenderer;
 use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\RendererInterface;
 use Psr\Container\ContainerInterface;
+
+use function assert;
 
 class ViewPdfRendererFactory
 {
     /**
      * @param ContainerInterface $container
+     *
      * @return PdfRenderer
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): PdfRenderer
     {
+        $phpRenderer = $container->get(PhpRenderer::class);
+        assert($phpRenderer instanceof RendererInterface);
+
+        $domPdf = $container->get(Dompdf::class);
+        assert($domPdf instanceof Dompdf);
+
         return (new PdfRenderer())
-            ->setHtmlRenderer($container->get(PhpRenderer::class))
-            ->setEngine($container->get(Dompdf::class));
+            ->setHtmlRenderer($phpRenderer)
+            ->setEngine($domPdf);
     }
 }

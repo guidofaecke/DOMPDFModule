@@ -32,6 +32,7 @@ class PdfModel extends ViewModel
 
     /**
      * Renderer options
+     *
      * @var array
      */
     protected $options = [
@@ -43,12 +44,11 @@ class PdfModel extends ViewModel
     ];
 
     /**
-     * PDF probably won't need to be captured into a
-     * a parent container by default.
+     * PDF probably won't need to be captured into a parent container by default.
      *
      * @var string
      */
-    protected $captureTo = null;
+    protected $captureTo = '';
 
     /**
      * PDF is usually terminal

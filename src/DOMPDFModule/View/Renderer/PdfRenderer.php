@@ -22,11 +22,12 @@ declare(strict_types=1);
 
 namespace DOMPDFModule\View\Renderer;
 
+use Dompdf\Dompdf;
 use DOMPDFModule\View\Model\PdfModel;
 use Laminas\View\Exception\InvalidArgumentException;
 use Laminas\View\Renderer\RendererInterface as Renderer;
 use Laminas\View\Resolver\ResolverInterface as Resolver;
-use Dompdf\Dompdf;
+use RuntimeException;
 
 class PdfRenderer implements Renderer
 {
@@ -88,7 +89,7 @@ class PdfRenderer implements Renderer
     /**
      * {@inheritdoc}
      */
-    public function render($nameOrModel, $values = null): ?string
+    public function render($nameOrModel, $values = null): string
     {
         if (!($nameOrModel instanceof PdfModel)) {
             throw new InvalidArgumentException(\sprintf(
@@ -98,19 +99,35 @@ class PdfRenderer implements Renderer
             ));
         }
 
-        $html = $this->getHtmlRenderer()->render($nameOrModel, $values);
+        $renderer = $this->getHtmlRenderer();
 
+        if ($renderer === null) {
+            throw new InvalidArgumentException('No HTMLRenderer defined');
+        }
+
+        $html = $renderer->render($nameOrModel, $values);
+
+        /** @var float[]|string $paperSize */
         $paperSize = $nameOrModel->getOption('paperSize');
+
+        /** @var string $paperOrientation */
         $paperOrientation = $nameOrModel->getOption('paperOrientation');
+
+        /** @var string $basePath */
         $basePath = $nameOrModel->getOption('basePath');
 
         $pdf = $this->getEngine();
+
+        if ($pdf === null) {
+            throw new RuntimeException('No renderer engine set');
+        }
+
         $pdf->setPaper($paperSize, $paperOrientation);
         $pdf->setBasePath($basePath);
 
         $pdf->loadHtml($html);
         $pdf->render();
 
-        return $pdf->output();
+        return $pdf->output() ?? '';
     }
 }

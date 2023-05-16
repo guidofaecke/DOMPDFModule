@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace DOMPDFModule;
 
+/** @psalm-suppress UnusedClass */
 class Module
 {
     public function getConfig(): array
@@ -29,9 +30,9 @@ class Module
         $configProvider = new ConfigProvider();
 
         return [
-            'dompdf_module' => $configProvider->getDOMPDFModuleConfig(),
+            'dompdf_module'   => $configProvider->getDOMPDFModuleConfig(),
             'service_manager' => $configProvider->getDependenciesConfig(),
-            'view_manager' => $configProvider->getViewManagerConfig(),
+            'view_manager'    => $configProvider->getViewManagerConfig(),
         ];
     }
 }

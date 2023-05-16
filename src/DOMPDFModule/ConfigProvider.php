@@ -4,21 +4,26 @@ declare(strict_types=1);
 
 namespace DOMPDFModule;
 
+use Dompdf\Dompdf;
+use DOMPDFModule\Service\DOMPDFFactory;
+use DOMPDFModule\View\Renderer\PdfRenderer;
+use DOMPDFModule\View\Strategy\PdfStrategy;
+
 final class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dompdf_module' => $this->getDOMPDFModuleConfig(),
-            'dependencies' => $this->getDependenciesConfig(),
-            'view_manager' => $this->getViewManagerConfig(),
+            'dependencies'  => $this->getDependenciesConfig(),
+            'view_manager'  => $this->getViewManagerConfig(),
         ];
     }
 
     public function getDependenciesConfig(): array
     {
         return [
-            'shared' => [
+            'shared'    => [
                 /**
                  * DOMPDF itself has issues rendering twice in a row so we force a
                  * new instance to be created.
@@ -26,14 +31,14 @@ final class ConfigProvider
                 'DOMPDF' => false
             ],
             'factories' => [
-                \Dompdf\Dompdf::class => \DOMPDFModule\Service\DOMPDFFactory::class,
+                Dompdf::class                    => DOMPDFFactory::class,
                 View\Renderer\PdfRenderer::class => Mvc\Service\ViewPdfRendererFactory::class,
                 View\Strategy\PdfStrategy::class => Mvc\Service\ViewPdfStrategyFactory::class,
             ],
-            'aliases' => [
-                'DOMPDF'          => \Dompdf\Dompdf::class,
-                'ViewPdfRenderer' => \DOMPDFModule\View\Renderer\PdfRenderer::class,
-                'ViewPdfStrategy' => \DOMPDFModule\View\Strategy\PdfStrategy::class,
+            'aliases'   => [
+                'DOMPDF'          => Dompdf::class,
+                'ViewPdfRenderer' => PdfRenderer::class,
+                'ViewPdfStrategy' => PdfStrategy::class,
             ]
         ];
     }

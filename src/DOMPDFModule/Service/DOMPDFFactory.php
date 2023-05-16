@@ -30,7 +30,12 @@ class DOMPDFFactory
 {
     /**
      * @param ContainerInterface $container
+     *
      * @return Dompdf
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     *
+     * @psalm-suppress MixedArrayAccess, MixedAssignment
      */
     public function __invoke(ContainerInterface $container): Dompdf
     {

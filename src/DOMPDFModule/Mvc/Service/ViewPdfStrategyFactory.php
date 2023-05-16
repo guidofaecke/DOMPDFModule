@@ -26,14 +26,22 @@ use DOMPDFModule\View\Renderer\PdfRenderer;
 use DOMPDFModule\View\Strategy\PdfStrategy;
 use Psr\Container\ContainerInterface;
 
+use function assert;
+
 class ViewPdfStrategyFactory
 {
     /**
      * @param ContainerInterface $container
+     *
      * @return PdfStrategy
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): PdfStrategy
     {
-        return new PdfStrategy($container->get(PdfRenderer::class));
+        $pdfRenderer = $container->get(PdfRenderer::class);
+        assert($pdfRenderer instanceof PdfRenderer);
+
+        return new PdfStrategy($pdfRenderer);
     }
 }
