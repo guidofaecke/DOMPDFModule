@@ -25,6 +25,9 @@ use DOMPDFModule\View\Renderer\PdfRenderer;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\View\ViewEvent;
+use Traversable;
+
+use function iterator_to_array;
 
 class PdfStrategy implements ListenerAggregateInterface
 {
@@ -110,23 +113,45 @@ class PdfStrategy implements ListenerAggregateInterface
             return;
         }
 
+        /** @var \Laminas\Http\Response|null $response */
         $response = $event->getResponse();
+
+        if ($response === null) {
+            return;
+        }
+
         $response->setContent($result);
 
         $model   = $event->getModel();
+
+        if ($model === null) {
+            return;
+        }
+
         $options = $model->getOptions();
 
-        $fileName        = $options['fileName'];
-        $dispositionType = $options['display'];
+        if ($options instanceof Traversable) {
+            $optionsArray = iterator_to_array($options, true);
+        } else {
+            $optionsArray = $options;
+        }
 
-        if (\substr($fileName, -4) != '.pdf') {
+        /** @var string $fileName */
+        $fileName = $optionsArray['fileName'];
+
+        /** @var string $dispositionType */
+        $dispositionType = $optionsArray['display'];
+
+        if (!str_ends_with($fileName, '.pdf')) {
             $fileName .= '.pdf';
         }
 
         $headerValue = \sprintf('%s; filename="%s"', $dispositionType, $fileName);
 
-        $response->getHeaders()->addHeaderLine('Content-Disposition', $headerValue);
-        $response->getHeaders()->addHeaderLine('Content-Length', strlen($result));
-        $response->getHeaders()->addHeaderLine('Content-Type', 'application/pdf');
+        $headers = $response->getHeaders();
+        $headers
+            ->addHeaderLine('Content-Disposition', $headerValue)
+            ->addHeaderLine('Content-Length', (string) strlen($result))
+            ->addHeaderLine('Content-Type', 'application/pdf');
     }
 }

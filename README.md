@@ -1,8 +1,6 @@
 DOMPDFModule
 ============
 
-Master: ![master](https://github.com/netiul/DOMPDFModule/workflows/Continuous%20Integration/badge.svg?branch=master)
-
 The DOMPDF module integrates the DOMPDF library with Laminas with minimal effort on the consumer's end.
 
 ## Requirements
@@ -17,7 +15,7 @@ PHP Composer, please visit the official [PHP Composer site](http://getcomposer.o
 1. `cd my/project/directory`
 2. Add the module to the project by:
 
-    composer require netiul/dompdf-module
+    composer require guidofaecke/dompdf-module
 
 3. open `my/project/directory/config/application.config.php` and add the following key to your `modules`:
 
@@ -64,13 +62,13 @@ So you want to contribute? Fantastic! Don't worry, it's easy. Local builds, test
 2. Run the following from your terminal:
 
 ```
-docker build -t dino/dompdf-module .
-docker run -v composer-cache:/var/lib/composer -v ${PWD}:/opt/app dino/dompdf-module
+docker build -t guidofaecke/dompdf-module .
+docker run -v composer-cache:/var/lib/composer -v ${PWD}:/opt/app guidofaecke/dompdf-module
 ```
 
 Super easy, right? Here's a quick walk through as to what's going on.
 
-* `docker build -t dino/dompdf-module .` builds a docker image that will be used for each run (i.e. each time `docker run` is executed) and tags it with the name `dino/dompdf-module`.
-* `docker run -v composer-cache:/var/lib/composer -v ${PWD}:/opt/app dino/dompdf-module` runs the default build in a new Docker container derived from the image tagged `dino/dompdf-module`. The root of the project and PHP Composer cache volume are mounted so that artifacts generated during the build process are available to you on your local machine.
+* `docker build -t guidofaecke/dompdf-module .` builds a docker image that will be used for each run (i.e. each time `docker run` is executed) and tags it with the name `guidofaecke/dompdf-module`.
+* `docker run -v composer-cache:/var/lib/composer -v ${PWD}:/opt/app guidofaecke/dompdf-module` runs the default build in a new Docker container derived from the image tagged `guidofaecke/dompdf-module`. The root of the project and PHP Composer cache volume are mounted so that artifacts generated during the build process are available to you on your local machine.
 
 **Note:** You only need to run the first command once in order to build the image. The second command is what executes the build (build, tests, code quality checks, etc.).
